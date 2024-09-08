@@ -21,7 +21,15 @@ function MatrixCalculator() {
     ) => {
         //Se crea una copio de la matriz
         const newMatrix = matrix.map(r => [...r]);
-        newMatrix[row][col] = parseFloat(value) || 0;
+        //Permite que los input esten en cero 
+        //newMatrix[row][col] = parseFloat(value) || 0;
+        // Si el valor es vacío, se establece como cadena vacía en lugar de un número
+        if (value === '') {
+            newMatrix[row][col] = value as unknown as number; // Temporariamente permite un string vacío
+        } else {
+            newMatrix[row][col] = parseFloat(value); // Convertir a número solo si hay algo en value
+        }
+
         setMatrix(newMatrix);
     };
 
@@ -124,7 +132,7 @@ function MatrixCalculator() {
                                 <input
                                     key={j}
                                     type="number"
-                                    value={value}
+                                    value={isNaN(value) ? '': value}
                                     onChange={(e) => handleMatrixAInput(i, j, e.target.value)}
                                 />
                             ))}
@@ -141,7 +149,7 @@ function MatrixCalculator() {
                                 <input
                                     key={j}
                                     type="number"
-                                    value={value}
+                                    value={isNaN(value) ? '': value}
                                     onChange={(e) => handleMatrixBInput(i, j, e.target.value)}
                                 />
                             ))}
