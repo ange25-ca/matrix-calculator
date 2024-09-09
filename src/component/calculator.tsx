@@ -83,45 +83,81 @@ function MatrixCalculator() {
         }
     };
 
+    const multiplyMatrices = (A: number[][], B: number[][]): number[][] => {
+        const rowsA = A.length;
+        const colsA = A[0].length;
+        const rowsB = B.length;
+        const colsB = B[0].length;
+    
+        // Verifica si la multiplicación es posible
+        if (colsA !== rowsB) {
+            throw new Error('Número de columnas de A debe ser igual al número de filas de B');
+        }
+    
+        // Inicializa la matriz resultado
+        const result = Array.from({ length: rowsA }, () => Array(colsB).fill(0));
+    
+        // Calcula la multiplicación de matrices
+        for (let i = 0; i < rowsA; i++) {
+            for (let j = 0; j < colsB; j++) {
+                for (let k = 0; k < colsA; k++) {
+                    result[i][j] += A[i][k] * B[k][j];
+                }
+            }
+        }
+    
+        return result;
+    };
+    
+
     function calculate() {
         if (operator === null) {
             alert('Selecciona una operación antes de calcular');
             return;
         }
-
-        let result;
+    
+        let result: number[][];
+    
         switch (dimensionMatrix) {
             case 'unidimensional':
-                result = matrixA.map((row, i) =>
-                    row.map((_, j) =>
-                        applyOperation(matrixA[i][j], matrixB[i][j], operator!)
-                    )
-                );
-                setResultMatrix(result);
+                if (operator === '*') {
+                    // Multiplicación de vectores (unidimensional)
+                    result = matrixA.map((value, i) =>
+                        [applyOperation(value[0], matrixB[i][0], operator!)]
+                    );
+                } else {
+                    result = matrixA.map((row, i) =>
+                        row.map((_, j) =>
+                            applyOperation(matrixA[i][j], matrixB[i][j], operator!)
+                        )
+                    );
+                }
                 break;
+    
             case 'bidimensional':
-                result = matrixA.map((row, i) =>
-                    row.map((_, j) =>
-                        applyOperation(matrixA[i][j], matrixB[i][j], operator!)
-                    )
-                );
-                setResultMatrix(result);
+                if (operator === '*') {
+                    result = multiplyMatrices(matrixA, matrixB);
+                } else {
+                    result = matrixA.map((row, i) =>
+                        row.map((_, j) =>
+                            applyOperation(matrixA[i][j], matrixB[i][j], operator!)
+                        )
+                    );
+                }
                 break;
+    
             case 'tridimensional':
-                result = matrixA.map((row, i) =>
-                    row.map((_, j) =>
-                        applyOperation(matrixA[i][j], matrixB[i][j], operator!)
-                    )
-                );
-                setResultMatrix(result);
-                break;
+                alert('La multiplicación de matrices tridimensionales no está implementada');
+                return;
+    
             default:
                 throw new Error('Dimensión no soportada');
         }
-
+    
+        setResultMatrix(result);
         setOperator(null);
-        
-    };
+    }
+    
 
     return (
         <div className='matrix-calculator'>
