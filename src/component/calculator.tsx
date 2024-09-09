@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from './Button';
 
 function MatrixCalculator() {
@@ -42,6 +42,7 @@ function MatrixCalculator() {
         setOperator(null);
     
         // Limpiar las matrices A y B restableciéndolas a una matriz de ceros según la dimensión actual
+        useEffect(() => {
         const defaultMatrix = dimensionMatrix === 'unidimensional'
             ? [[0]]
             : dimensionMatrix === 'bidimensional'
@@ -51,6 +52,7 @@ function MatrixCalculator() {
         setMatrixA(defaultMatrix);
         setMatrixB(defaultMatrix);
         setResultMatrix(null); // Limpiar también la matriz de resultados
+        }, [dimensionMatrix]);
     }
     
     
