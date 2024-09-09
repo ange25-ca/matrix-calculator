@@ -2,14 +2,12 @@ import { useState } from 'react';
 import Button from './Button';
 
 function MatrixCalculator() {
-    /*El valor de useState se incializa en 0*/
     /*El primer componente actualiza el segundo*/
-    const [displayValue, setDisplayValue] = useState<string>('0');
+    const [displayValue, setDisplayValue] = useState<string>('Prueba la calculadora');
     const [matrixA, setMatrixA] = useState<number[][]>([[0]]);
     const [matrixB, setMatrixB] = useState<number[][]>([[0]]);
     const [resultMatrix, setResultMatrix] = useState<number[][] | null>(null); 
     const [operator, setOperator] = useState<string | null>(null);
-    const [firstOperand, setFirstOperand] = useState<number | string | null>(null);
     const [dimensionMatrix, setDimensionMatrix] = useState<'unidimensional' | 'bidimensional' | 'tridimensional'>('unidimensional');
 
     const handleMatrixInput = (
@@ -21,8 +19,6 @@ function MatrixCalculator() {
     ) => {
         //Se crea una copio de la matriz
         const newMatrix = matrix.map(r => [...r]);
-        //Permite que los input esten en cero 
-        //newMatrix[row][col] = parseFloat(value) || 0;
         // Si el valor es vacío, se establece como cadena vacía en lugar de un número
         if (value === '') {
             newMatrix[row][col] = value as unknown as number; // Temporariamente permite un string vacío
@@ -40,6 +36,23 @@ function MatrixCalculator() {
     const handleMatrixBInput = (row: number, col: number, value: string) => {
         handleMatrixInput(matrixB, setMatrixB, row, col, value);
     };
+
+    function handClearClick() {
+        setDisplayValue('Ingresa nuevamente las valores de las matrices a calcular :)');
+        setOperator(null);
+    
+        // Limpiar las matrices A y B restableciéndolas a una matriz de ceros según la dimensión actual
+        const defaultMatrix = dimensionMatrix === 'unidimensional'
+            ? [[0]]
+            : dimensionMatrix === 'bidimensional'
+                ? [[0, 0], [0, 0]]
+                : [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+    
+        setMatrixA(defaultMatrix);
+        setMatrixB(defaultMatrix);
+        setResultMatrix(null); // Limpiar también la matriz de resultados
+    }
+    
     
     // Selección de dimensiones de la matriz
     const handleDimensionChange = (dimension: 'unidimensional' | 'bidimensional' | 'tridimensional') => {
@@ -107,7 +120,7 @@ function MatrixCalculator() {
         }
 
         setOperator(null);
-        setFirstOperand(null);
+        
     };
 
     return (
@@ -123,9 +136,12 @@ function MatrixCalculator() {
 
                 <h3>Tipo de Matriz Seleccionado: {dimensionMatrix}</h3>
 
-                {/* Ingreso de la matriz A */}
+                {displayValue} {/*Mensaje de que ingrese nuevamente los valores*/}
+
+                {/* Matriz A */}
                 <div>
                     <h3>Matriz A</h3>
+                    {/*Crea una copia de la matriz B*/}
                     {matrixA.map((row, i) => (
                         <div key={i}>
                             {row.map((value, j) => (
@@ -140,9 +156,10 @@ function MatrixCalculator() {
                     ))}
                 </div>
 
-                {/* Ingreso de la matriz B */}
+                {/* Matriz B */}
                 <div>
                     <h3>Matriz B</h3>
+                    {/*Crea una copia de la matriz B*/}
                     {matrixB.map((row, i) => (
                         <div key={i}>
                             {row.map((value, j) => (
@@ -157,21 +174,24 @@ function MatrixCalculator() {
                     ))}
                 </div>
 
-                {/* Botones para realizar operaciones */}
+                {/* Botones para realizar operaciones 
+                    Implementación de los props en los botones operacionales
+                */}
                 <Button value="A + B" onClick={() => setOperator('+')}/>
                 <Button value="A - B" onClick={() => setOperator('-')}/>
                 <Button value="A * B" onClick={() => setOperator('*')}/>
                 <Button value="A / B" onClick={() => setOperator('/')}/>
                 <Button value="Calcular" onClick={calculate}/>
+                <Button value="C" onClick={handClearClick} />
 
-                {/* Mostrar el resultado */}
+                {/* Resultado */}
                 {resultMatrix && (
                     <div>
                         <h3>Resultado</h3>
                         {resultMatrix.map((row, i) => (
-                            <div key={i} style={{ display: 'flex' }}>
+                            <div key={i}>
                                 {row.map((value, j) => (
-                                    <div key={j} style={{ marginRight: '10px' }}>{value}</div>
+                                    <div key={j}>{value}</div>
                                 ))}
                             </div>
                         ))}
