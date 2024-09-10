@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
+import '../calculator.css'; //Importa el archivo css
 import Button from './Button';
 import { validateMatrix, validationsDimension } from '../validationZOD/validationsDimension';
+import Hecho_en from './children';
+import MatrixResult from './matrixResult';
 
 function MatrixCalculator() {
     /*El primer componente actualiza el segundo*/
@@ -94,7 +97,7 @@ function MatrixCalculator() {
     };
 
 
-    const applyOperation = (a: number, b: number, operator: string): number => {
+    const applyOperation = (a: number, b: number, operator: string) => {
         switch (operator) {
             case '+':
                 return a + b;
@@ -102,8 +105,6 @@ function MatrixCalculator() {
                 return a - b;
             case '*':
                 return a * b;
-            case '/':
-                return a / b;
             default:
                 throw new Error('Operador no válido');
         }
@@ -201,7 +202,7 @@ function MatrixCalculator() {
 
     return (
         <div className='matrix-calculator'>
-            <h2>Calculadora de Matrices</h2>
+            <h1>Calculadora de Matrices</h1>
             <div className='display'>
                 {/* Botones para seleccionar el tipo de matriz */}
                 <div>
@@ -210,12 +211,12 @@ function MatrixCalculator() {
                     <Button value="Matriz Tridimencional" onClick={() => handleDimensionChange('tridimensional')} />
                 </div>
 
-                <h3>Tipo de Matriz Seleccionado: {dimensionMatrix}</h3>
+                <h4>Tipo de Matriz Seleccionado: {dimensionMatrix}</h4>
 
                 {displayValue} {/*Mensaje de que ingrese nuevamente los valores*/}
 
                 {/* Matriz A */}
-                <div>
+                <div className='matriz'>
                     <h3>Matriz A</h3>
                     {/*Crea una copia de la matriz B*/}
                     {matrixA.map((row, i) => (
@@ -233,7 +234,7 @@ function MatrixCalculator() {
                 </div>
 
                 {/* Matriz B */}
-                <div>
+                <div className='matriz'>
                     <h3>Matriz B</h3>
                     {/*Crea una copia de la matriz B*/}
                     {matrixB.map((row, i) => (
@@ -256,24 +257,20 @@ function MatrixCalculator() {
                 <Button value="A + B" onClick={() => setOperator('+')} />
                 <Button value="A - B" onClick={() => setOperator('-')} />
                 <Button value="A * B" onClick={() => setOperator('*')} />
-                <Button value="A / B" onClick={() => setOperator('/')} />
                 <Button value="Calcular" onClick={calculate} />
                 <Button value="C" onClick={handClearClick} />
-
+                
                 {/* Resultado */}
                 {resultMatrix && (
-                    <div>
-                        <h3>Resultado</h3>
-                        {resultMatrix.map((row, i) => (
-                            <div key={i}>
-                                {row.map((value, j) => (
-                                    <div key={j}>{value}</div>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
+                    <MatrixResult
+                        resultMatrix={resultMatrix}
+                        dimensionMatrix={dimensionMatrix}
+                    />
                 )}
             </div>
+            <Hecho_en>
+                <h3>MADE IN CHINA</h3>
+            </Hecho_en>
         </div>
     );
 }
