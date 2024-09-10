@@ -1,9 +1,9 @@
 import React from 'react';
-import { ButtonProps} from './ButtonProps';
+import { ButtonProps } from '../interfaces/interfaces';
 
-const Button: React.FC<ButtonProps> = ({value, onClick}) => {
-    return(
-        <button className='operator' onClick={onClick}>
+const Button: React.FC<ButtonProps> = ({ value, onClick, disabled }) => {
+    return (
+        <button className='operator' onClick={onClick} disabled={disabled}>
             {value}
         </button>
     );
