@@ -1,35 +1,27 @@
-
-export function add3DMatrices(A: number[][][], B: number[][][]): number[][][] {
-    console.log('Matriz A:', A);
-    console.log('Matriz B:', B);
-
-    const depth = A.length;
-    const rows = A[0].length;
-    const cols = A[0][0].length;
-
-    // Verifica que las dimensiones de ambas matrices sean iguales
-    if (depth !== B.length || rows !== B[0].length || cols !== B[0][0].length) {
-        throw new Error('Las matrices tridimensionales deben tener las mismas dimensiones');
+export function add3DMatrices(matrixA: number[][][], matrixB: number[][][]): number[][][] {
+    // Verifica si las matrices tienen las mismas dimensiones
+    if (
+        matrixA.length !== matrixB.length ||
+        matrixA[0].length !== matrixB[0].length ||
+        matrixA[0][0].length !== matrixB[0][0].length
+    ) {
+        throw new Error('Las matrices no tienen las mismas dimensiones');
     }
 
-    // Inicializa la matriz de resultados con ceros
-    const result: number[][][] = Array.from({ length: depth }, () =>
-        Array.from({ length: rows }, () => Array(cols).fill(0))
-    );
+    // Crear una nueva matriz para almacenar el resultado
+    const resultMatrix: number[][][] = [];
 
-    console.log('Matriz de resultados inicial:', result);
-
-    // Realiza la suma de las matrices
-    for (let d = 0; d < depth; d++) {
-        for (let r = 0; r < rows; r++) {
-            for (let c = 0; c < cols; c++) {
-                console.log(`Sumando A[${d}][${r}][${c}] = ${A[d][r][c]} y B[${d}][${r}][${c}] = ${B[d][r][c]}`);
-                result[d][r][c] = A[d][r][c] + B[d][r][c];
-                console.log(`Resultado en result[${d}][${r}][${c}] = ${result[d][r][c]}`);
+    for (let i = 0; i < matrixA.length; i++) {
+        const layer: number[][] = [];
+        for (let j = 0; j < matrixA[i].length; j++) {
+            const row: number[] = [];
+            for (let k = 0; k < matrixA[i][j].length; k++) {
+                row.push(matrixA[i][j][k] + matrixB[i][j][k]);
             }
+            layer.push(row);
         }
+        resultMatrix.push(layer);
     }
 
-    console.log('Resultado final:', result);
-    return result;
+    return resultMatrix;
 }

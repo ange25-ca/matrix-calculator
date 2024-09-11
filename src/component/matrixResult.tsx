@@ -1,5 +1,6 @@
 import React from 'react';
 import '../calculator.css';
+import './matriztridi';
 
 interface MatrixResultProps {
     resultMatrix: number[][] | number[][][] | number[] | null;
@@ -29,7 +30,7 @@ const MatrixResult: React.FC<MatrixResultProps> = ({ resultMatrix, dimensionMatr
             <div>
                 <h3>Resultado:</h3>
                 <div className="matrix-container">
-                    { (resultMatrix as number[][]).map((row, i) => (
+                    {(resultMatrix as number[][]).map((row, i) => (
                         <div key={i} className="matrix-row">
                             {row.map((value, j) => (
                                 <span key={j} className="matrix-cell">{value}</span>
@@ -45,15 +46,17 @@ const MatrixResult: React.FC<MatrixResultProps> = ({ resultMatrix, dimensionMatr
         return (
             <div>
                 <h3>Resultado:</h3>
-                { (resultMatrix as number[][][]).map((layer, k) => (
+                {(resultMatrix as number[][][]).map((layer, k) => (
                     <div key={k} className="matrix-layer">
                         <h4>Capa {k + 1}</h4>
                         <div className="matrix-container">
-                            { layer.map((row, i) => (
+                            {layer.map((row, i) => (
                                 <div key={i} className="matrix-row">
                                     {row.map((value, j) => (
                                         <span key={j} className="matrix-cell">{value}</span>
                                     ))}
+
+                                    
                                 </div>
                             ))}
                         </div>
@@ -61,6 +64,7 @@ const MatrixResult: React.FC<MatrixResultProps> = ({ resultMatrix, dimensionMatr
                 ))}
             </div>
         );
+
     }
 
     return <div>No hay resultados para mostrar.</div>;
