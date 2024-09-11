@@ -16,7 +16,7 @@ const is3DMatrix = (matrix: number[][] | number[][][]): matrix is number[][][] =
     return Array.isArray(matrix[0]) && Array.isArray(matrix[0][0]);
 };
 
-// Función para calcular el determinante de una submatriz 2x2 extraída de una capa 2D de una matriz 3D
+// Función para calcular el determinante de una submatriz 2x2
 export const determinant2x2From3D = (matrix: number[][][], layer: number, rowStart: number, colStart: number): number => {
     const submatrix: number[][] = [];
     for (let i = rowStart; i < rowStart + 2; i++) {
@@ -50,7 +50,7 @@ export const determinant = (matrix: number[][] | number[][][]): number => {
         } else if (matrix.length === 3 && matrix[0].length === 3) {
             return determinant3x3(matrix);
         } else {
-            throw new Error('Determinante solo soportado para matrices 1x1, 2x2 y 3x3');
+            throw new Error('Determinante solo soportado para matrices');
         }
     }
 };

@@ -52,6 +52,7 @@ function MatrixCalculator() {
         }
     };
 
+    //Actualiza el valor de la matriz
     useEffect(() => {
         const defaultMatrixA = dimensionMatrix === 'unidimensional'
             ? [[0]]
@@ -167,30 +168,8 @@ function MatrixCalculator() {
 
         return result;
     };
-    {/*
+    
     const handleDeterminantClick = () => {
-        if (dimensionMatrix === 'tridimensional') {
-            alert('El cálculo del determinante no está soportado para matrices tridimensionales.');
-            return;
-        }
-    
-        const matrixAValidation = validateMatrix(matrixA);
-        if (!matrixAValidation.success) {
-            console.error(`Error en Matriz A: ${matrixAValidation.error?.issues.map(issue => issue.message).join(', ')}`);
-            return;
-        }
-    
-        let result: number | null = null;
-    
-        try {
-            result = determinant(matrixA as number[][]);
-        } catch (error) {
-            console.error(`Error al calcular el determinante: ${(error as Error).message}`);
-        }
-    
-        setResultMatrix(result !== null ? [[result]] : null);
-    };
-    */} const handleDeterminantClick = () => {
     if (dimensionMatrix === 'tridimensional') {
         try {
             const matrixA3D = matrixA as number[][][];
