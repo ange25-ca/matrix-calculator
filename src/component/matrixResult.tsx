@@ -1,5 +1,5 @@
 import React from 'react';
-import '../calculator.css' ;
+import '../calculator.css';
 
 interface MatrixResultProps {
     resultMatrix: number[][] | number[][][] | number[] | null;
@@ -67,4 +67,3 @@ const MatrixResult: React.FC<MatrixResultProps> = ({ resultMatrix, dimensionMatr
 };
 
 export default MatrixResult;
-
