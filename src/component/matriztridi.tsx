@@ -25,3 +25,22 @@ export function add3DMatrices(matrixA: number[][][], matrixB: number[][][]): num
 
     return resultMatrix;
 }
+
+
+export const subtract3DMatrices = (matrixA: number[][][], matrixB: number[][][]): number[][][] => {
+    const result: number[][][] = [];
+
+    for (let i = 0; i < matrixA.length; i++) {
+        const layer: number[][] = [];
+        for (let j = 0; j < matrixA[i].length; j++) {
+            const row: number[] = [];
+            for (let k = 0; k < matrixA[i][j].length; k++) {
+                row.push(matrixA[i][j][k] - matrixB[i][j][k]); // Resta elemento a elemento
+            }
+            layer.push(row);
+        }
+        result.push(layer);
+    }
+
+    return result;
+};

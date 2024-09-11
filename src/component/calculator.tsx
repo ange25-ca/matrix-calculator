@@ -4,7 +4,7 @@ import Button from './Button';
 import { validateMatrix, validationsDimension } from '../validationZOD/validationsDimension';
 import Hecho_en from './children';
 import MatrixResult from './matrixResult';
-import { add3DMatrices } from './matriztridi';
+import { add3DMatrices, subtract3DMatrices } from './matriztridi';
 
 function MatrixCalculator() {
     /*El primer componente actualiza el segundo*/
@@ -117,13 +117,23 @@ function MatrixCalculator() {
     };
 
     const handleSumClick = () => {
-        // Asegurarte de que las matrices sean tridimensionales antes de sumar
+        //Validaciones de las matrices 
         const matrixA3D = ensure3DMatrix(matrixA);
         const matrixB3D = ensure3DMatrix(matrixB);
 
         const result = add3DMatrices(matrixA3D, matrixB3D); // Sumar matrices tridimensionales
         setResultMatrix(result); // Guardar el resultado en el estado
     };
+
+    const handleSubtractClick = () => {
+        //Validaciones de las matrices
+        const matrixA3D = ensure3DMatrix(matrixA);
+        const matrixB3D = ensure3DMatrix(matrixB);
+    
+        const result = subtract3DMatrices(matrixA3D, matrixB3D); // Restar matrices tridimensionales
+        setResultMatrix(result); // Guardar el resultado en el estado
+    };
+    
 
     // Función para asegurar que una matriz es tridimensional
     const ensure3DMatrix = (matrix: number[][] | number[][][]): number[][][] => {
@@ -224,7 +234,11 @@ function MatrixCalculator() {
                 if (operator === '+') {
                         handleSumClick();
                         return;
-                } else {
+                } else if (operator === '-') {
+                    handleSubtractClick();
+                    return;
+                }
+                    else {
                     alert('Operación no soportada para matrices tridimensionales');
                     return;
                 }
