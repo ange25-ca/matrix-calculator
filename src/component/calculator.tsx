@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import '../calculator.css'; // Importa el archivo CSS
+import '../calculator.css';
 import Button from './Button';
 import { validateMatrix, validationsDimension } from '../validationZOD/validationsDimension';
 import Hecho_en from './children';
 import MatrixResult from './matrixResult';
 import { add3DMatrices, subtract3DMatrices } from './matriztridi';
+import { determinant, determinant3x3From3D } from './determinantes'; // Importa las funciones de determinante
 
 function MatrixCalculator() {
-    /*El primer componente actualiza el segundo*/
     const [displayValue, setDisplayValue] = useState<string>('Prueba la calculadora');
     const [matrixA, setMatrixA] = useState<number[][] | number[][][]>([[0]]);
     const [matrixB, setMatrixB] = useState<number[][] | number[][][]>([[0]]);
@@ -15,27 +15,22 @@ function MatrixCalculator() {
     const [operator, setOperator] = useState<string | null>(null);
     const [dimensionMatrix, setDimensionMatrix] = useState<'unidimensional' | 'bidimensional' | 'tridimensional'>('unidimensional');
 
-
     const handleMatrixInput = (
         matrix: number[][] | number[][][],
         setMatrix: React.Dispatch<React.SetStateAction<number[][] | number[][][]>>,
-        layer: number,  // Solo necesario para matrices tridimensionales
+        layer: number,
         row: number,
         col: number,
         value: string
     ) => {
-        let newMatrix: number[][] | number[][][];
+        let newMatrix: number[][] | number[][][] = Array.isArray((matrix as number[][][])[0][0])
+            ? (matrix as number[][][]).map(layer => layer.map(row => [...row]))
+            : (matrix as number[][]).map(row => [...row]);
 
-        if (Array.isArray((matrix as number[][][])[0][0])) {
-            // Si la matriz es tridimensional
-            newMatrix = (matrix as number[][][]).map(layer =>
-                layer.map(row => [...row])
-            ) as number[][][];
-            newMatrix[layer][row][col] = value === '' ? 0 : parseFloat(value); // Asigna 0 si value está vacío
+        if (Array.isArray(newMatrix[0][0])) {
+            (newMatrix as number[][][])[layer][row][col] = value === '' ? 0 : parseFloat(value);
         } else {
-            // Si la matriz es bidimensional
-            newMatrix = (matrix as number[][]).map(row => [...row]);
-            newMatrix[row][col] = value === '' ? 0 : parseFloat(value); // Asigna 0 si value está vacío
+            (newMatrix as number[][])[row][col] = value === '' ? 0 : parseFloat(value);
         }
 
         setMatrix(newMatrix);
@@ -57,7 +52,6 @@ function MatrixCalculator() {
         }
     };
 
-    // Lógica para actualizar las matrices cuando cambia la dimensión
     useEffect(() => {
         const defaultMatrixA = dimensionMatrix === 'unidimensional'
             ? [[0]]
@@ -73,7 +67,7 @@ function MatrixCalculator() {
 
         setMatrixA(defaultMatrixA);
         setMatrixB(defaultMatrixB);
-        setResultMatrix(null); // Limpiar también la matriz de resultados
+        setResultMatrix(null);
 
     }, [dimensionMatrix]);
 
@@ -81,7 +75,6 @@ function MatrixCalculator() {
         setDisplayValue('Ingresa nuevamente los valores de las matrices a calcular :)');
         setOperator(null);
 
-        // Reinicia las matrices A y B a ceros
         const defaultMatrix = dimensionMatrix === 'unidimensional'
             ? [[0]]
             : dimensionMatrix === 'bidimensional'
@@ -90,10 +83,9 @@ function MatrixCalculator() {
 
         setMatrixA(defaultMatrix);
         setMatrixB(defaultMatrix);
-        setResultMatrix(null); // Limpiar la matriz de resultados
+        setResultMatrix(null);
     };
 
-    // Validar el cambio de dimensión usando Zod
     const handleDimensionChange = (dimension: string) => {
         const validation = validationsDimension.safeParse(dimension);
 
@@ -117,35 +109,28 @@ function MatrixCalculator() {
     };
 
     const handleSumClick = () => {
-        //Validaciones de las matrices 
         const matrixA3D = ensure3DMatrix(matrixA);
         const matrixB3D = ensure3DMatrix(matrixB);
 
-        const result = add3DMatrices(matrixA3D, matrixB3D); // Sumar matrices tridimensionales
-        setResultMatrix(result); // Guardar el resultado en el estado
+        const result = add3DMatrices(matrixA3D, matrixB3D);
+        setResultMatrix(result);
     };
 
     const handleSubtractClick = () => {
-        //Validaciones de las matrices
         const matrixA3D = ensure3DMatrix(matrixA);
         const matrixB3D = ensure3DMatrix(matrixB);
-    
-        const result = subtract3DMatrices(matrixA3D, matrixB3D); // Restar matrices tridimensionales
-        setResultMatrix(result); // Guardar el resultado en el estado
-    };
-    
 
-    // Función para asegurar que una matriz es tridimensional
+        const result = subtract3DMatrices(matrixA3D, matrixB3D);
+        setResultMatrix(result);
+    };
+
     const ensure3DMatrix = (matrix: number[][] | number[][][]): number[][][] => {
         if (matrix.length > 0 && Array.isArray(matrix[0][0])) {
-            // Si ya es tridimensional, la retornamos sin cambios
             return matrix as number[][][];
         } else {
-            // Si es bidimensional, la envolvemos en una capa adicional para hacerla tridimensional
             return [matrix] as number[][][];
         }
     };
-
 
     const applyOperation = (a: number, b: number, operator: string) => {
         switch (operator) {
@@ -166,15 +151,12 @@ function MatrixCalculator() {
         const rowsB = B.length;
         const colsB = B[0].length;
 
-        // Verifica si la multiplicación es posible
         if (colsA !== rowsB) {
             throw new Error('Número de columnas de A debe ser igual al número de filas de B');
         }
 
-        // Inicializa la matriz resultado
         const result = Array.from({ length: rowsA }, () => Array(colsB).fill(0));
 
-        // Calcula la multiplicación de matrices
         for (let i = 0; i < rowsA; i++) {
             for (let j = 0; j < colsB; j++) {
                 for (let k = 0; k < colsA; k++) {
@@ -185,6 +167,69 @@ function MatrixCalculator() {
 
         return result;
     };
+    {/*
+    const handleDeterminantClick = () => {
+        if (dimensionMatrix === 'tridimensional') {
+            alert('El cálculo del determinante no está soportado para matrices tridimensionales.');
+            return;
+        }
+    
+        const matrixAValidation = validateMatrix(matrixA);
+        if (!matrixAValidation.success) {
+            console.error(`Error en Matriz A: ${matrixAValidation.error?.issues.map(issue => issue.message).join(', ')}`);
+            return;
+        }
+    
+        let result: number | null = null;
+    
+        try {
+            result = determinant(matrixA as number[][]);
+        } catch (error) {
+            console.error(`Error al calcular el determinante: ${(error as Error).message}`);
+        }
+    
+        setResultMatrix(result !== null ? [[result]] : null);
+    };
+    */} const handleDeterminantClick = () => {
+    if (dimensionMatrix === 'tridimensional') {
+        try {
+            const matrixA3D = matrixA as number[][][];
+            if (matrixA3D.length > 0 && matrixA3D[0].length > 0 && matrixA3D[0][0].length > 0) {
+                // Asume que calculas el determinante de la primera capa (layer 0)
+                const result = determinant3x3From3D(matrixA3D, 0);
+                setResultMatrix([[result]]);
+                setDisplayValue(`Determinante de la primera capa: ${result}`);
+            } else {
+                console.error('La matriz tridimensional no tiene capas válidas para calcular el determinante.');
+                setDisplayValue('Error: La matriz tridimensional no tiene capas válidas para calcular el determinante.');
+            }
+        } catch (error) {
+            console.error(`Error al calcular el determinante: ${(error as Error).message}`);
+            setDisplayValue(`Error al calcular el determinante: ${(error as Error).message}`);
+        }
+        return;
+    }
+
+    // Manejo para matrices 2D y 1D
+    const matrixAValidation = validateMatrix(matrixA);
+    if (!matrixAValidation.success) {
+        console.error(`Error en Matriz A: ${matrixAValidation.error?.issues.map(issue => issue.message).join(', ')}`);
+        setDisplayValue(`Error en Matriz A: ${matrixAValidation.error?.issues.map(issue => issue.message).join(', ')}`);
+        return;
+    }
+
+    let result: number | null = null;
+
+    try {
+        result = determinant(matrixA as number[][]);
+        setResultMatrix(result !== null ? [[result]] : null);
+        setDisplayValue(`Determinante: ${result}`);
+    } catch (error) {
+        console.error(`Error al calcular el determinante: ${(error as Error).message}`);
+        setDisplayValue(`Error al calcular el determinante: ${(error as Error).message}`);
+    }
+};
+
 
     const calculate = () => {
         if (operator === null) {
@@ -192,7 +237,6 @@ function MatrixCalculator() {
             return;
         }
 
-        // Validar las matrices antes de calcular
         const matrixAValidation = validateMatrix(matrixA);
         const matrixBValidation = validateMatrix(matrixB);
 
@@ -232,13 +276,12 @@ function MatrixCalculator() {
 
             case 'tridimensional':
                 if (operator === '+') {
-                        handleSumClick();
-                        return;
+                    handleSumClick();
+                    return;
                 } else if (operator === '-') {
                     handleSubtractClick();
                     return;
-                }
-                    else {
+                } else {
                     alert('Operación no soportada para matrices tridimensionales');
                     return;
                 }
@@ -256,7 +299,6 @@ function MatrixCalculator() {
         <div className='matrix-calculator'>
             <h1>Calculadora de Matrices</h1>
             <div className='display'>
-                {/* Botones para seleccionar el tipo de matriz */}
                 <div>
                     <Button value="Matriz Unidimensional" onClick={() => handleDimensionChange('unidimensional')} />
                     <Button value="Matriz Bidimensional" onClick={() => handleDimensionChange('bidimensional')} />
@@ -265,12 +307,10 @@ function MatrixCalculator() {
 
                 <h4>Tipo de Matriz Seleccionado: {dimensionMatrix}</h4>
 
-                {displayValue} {/* Mensaje de que ingrese nuevamente los valores */}
+                {displayValue}
 
-                {/* Matriz A */}
                 <div className='matriz'>
                     <h3>Matriz A</h3>
-                    {/* Crea una copia de la matriz A */}
                     {matrixA.map((row, i) => (
                         <div key={i}>
                             {row.map((value, j) => (
@@ -285,11 +325,8 @@ function MatrixCalculator() {
                     ))}
                 </div>
 
-
-                {/* Matriz B */}
                 <div className='matriz'>
                     <h3>Matriz B</h3>
-                    {/* Crea una copia de la matriz A */}
                     {matrixB.map((row, i) => (
                         <div key={i}>
                             {row.map((value, j) => (
@@ -304,19 +341,18 @@ function MatrixCalculator() {
                     ))}
                 </div>
 
-
-                {/* Botones para realizar operaciones */}
                 <Button value="A + B" onClick={() => setOperator('+')} />
                 <Button value="A - B" onClick={() => setOperator('-')} />
                 <Button value="A * B" onClick={() => setOperator('*')} />
+                <Button value="Determinante" onClick={handleDeterminantClick} />
                 <Button value="Calcular" onClick={calculate} />
                 <Button value="C" onClick={handClearClick} />
 
-                {/* Resultado */}
                 {resultMatrix && (
                     <MatrixResult
                         resultMatrix={resultMatrix}
                         dimensionMatrix={dimensionMatrix}
+
                     />
                 )}
             </div>
