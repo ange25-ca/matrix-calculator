@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'jsdom', 
-    setupFiles: './src/tests/calculator.text.tsx', 
+    setupFiles: './src/setupTest.ts', 
     globals: true, 
   },
 });
